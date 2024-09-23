@@ -1,0 +1,29 @@
+<?php 
+function ajax_schema() {
+    $schema = array();
+    $schema['ajax'] = array(
+        'description' => 'Table for ajax',
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+            ),
+            'name' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'description' => 'Name of the entity.',
+            ),
+            'email' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'description' => 'Email of the entity.',
+            ),
+        ),
+        'primary key' => array('id'),
+    );
+
+    return $schema;
+}

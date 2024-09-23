@@ -1,0 +1,147 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function diwali_gifts_menu() {
+    $items = array();
+    // Menu item for adding a new configuration.
+    $items['admin/config/user-interface/diwali_gifts'] = array(
+      'title'             =>  'Add Diwali Gifts',
+      'description'       =>  'Diwali Gifts Information',
+      'page callback'     =>  'drupal_get_form',
+      'access callback'   =>   true,  //any user can access this page
+      'page arguments'    =>   array('diwali_gifts_configuration_form'),
+      'access arguments'  =>   array('administer site configuration'),
+      'type'              =>   MENU_NORMAL_ITEM
+    );
+
+    // Menu item for adding a new configuration.
+    $items['admin/structure/entity_add'] = array(
+      'title'             =>  'Add Entity Here',
+      'description'       =>  'Add Entity Here',
+      'access callback'   =>   true,  //any user can access this page
+      'page arguments'    =>   array('add_entity_here'),
+      'access arguments'  =>   array('administer site configuration'),
+      'type'              =>   MENU_NORMAL_ITEM
+    );
+
+    return $items;
+} 
+
+
+
+function add_entity_here() {
+   $query = db_select('custom', 't')
+    ->fields('t', array('id', 'name')) // Adjust fields as needed.
+    ->execute();
+ 
+  $rows = array();
+  foreach ($query as $record) {
+    // Create a row for each record.
+    $rows[] = array(
+      'data' => array(
+        $record->id,
+        $record->name,
+      ),
+    );
+  }
+ 
+  // Define the table header.
+  $header = array('ID', 'Name');
+  $output = theme('table', array('header' => $header, 'rows' => $rows));
+  $button = '<input type="button" value="Add custom content type" id="my-button" class="my-button-class btn-info">';
+ 
+  return $button . $output; 
+}
+
+// function to load custom content entity
+/*function load_custom_content_entity() {
+  // Query the database table.
+  $query = db_select('custom', 't')
+    ->fields('t', array('id', 'name')) // Adjust fields as needed.
+    ->execute();
+ 
+  $rows = array();
+  foreach ($query as $record) {
+    // Create a row for each record.
+    $rows[] = array(
+      'data' => array(
+        $record->id,
+        $record->name,
+      ),
+    );
+  }
+ 
+  // Define the table header.
+  $header = array('ID', 'Name');
+  $output = theme('table', array('header' => $header, 'rows' => $rows));
+  $button = '<input type="button" value="Add custom content type" id="my-button" class="my-button-class btn-info">';
+ 
+  return $button . $output;  
+}
+*/
+
+
+/**
+ * Form builder for module configuration.
+ */
+function diwali_gifts_configuration_form($form, &$form_state) {
+  $form['diwali_gift_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Diwali Gift Name'),
+    '#default_value' => variable_get('diwali_gift_name', ''),
+    '#description' => t('Enter a value.'),
+    '#required' => TRUE,
+  );
+
+  $form['diwali_gift_description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Diwali Gift Description'),
+    '#default_value' => variable_get('diwali_gift_description', ''),
+    '#description' => t('Enter a value.'),
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+
+  return $form;
+}
+
+/**
+ * Form submission handler for module configuration.
+ */
+function diwali_gifts_configuration_form_submit($form, &$form_state) {
+  variable_set('diwali_gift_name', $form_state['values']['diwali_gift_name']);
+
+//$query = db_select('diwali_gifts');
+$query = db_insert('diwali_gifts')
+    ->fields(array(
+      'name' => $form_state['values']['diwali_gift_name'],
+      'description' => $form_state['values']['diwali_gift_description']
+    ))
+    ->execute();
+ 
+  drupal_set_message(t('Configuration saved.'));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

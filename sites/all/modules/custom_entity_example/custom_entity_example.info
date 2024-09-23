@@ -1,0 +1,7 @@
+name: 'Custom Entity Example'
+type: module
+description: 'Provides a custom content entity example.'
+package: Custom
+dependencies:
+  - drupal:field
+  - drupal:text

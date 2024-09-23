@@ -1,0 +1,87 @@
+<?php
+function customajax_menu() {
+    $items = array();
+    $items['customajax_forms'] = array(
+      'title'             =>  'Custom AJAX Form',
+      'description'       =>  'Custom AJAX Form',
+      'page callback'     =>  'drupal_get_form',
+      'page arguments'    =>   array('mymodule_ajax_form'),
+      'access arguments'  =>   array('administer site configuration'),
+      'type'              =>   MENU_NORMAL_ITEM
+    );
+
+    $items['customajax_forms/list'] = array(
+      'page callback' => 'ajax_submit_callback',
+      'access callback' => TRUE,
+      'title'             =>  'View  Ajax Data',
+      'description'       =>  'View AJAX Data',
+      'type' => MENU_NORMAL_ITEM,
+    );
+
+    return $items;
+}
+
+/**
+ * Implements a custom form with AJAX in Drupal 7.
+ */
+function mymodule_ajax_form($form, &$form_state) {
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Enter Name'),
+    '#ajax' => array(
+      'callback' => 'mymodule_ajax_submit_callback',
+      'wrapper' => 'my-form-output',
+    ),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+    '#ajax' => array(
+      'callback' => 'mymodule_ajax_submit_callback',
+      'wrapper' => 'my-form-output',
+      'callback' => '::ajax_submit_callback',
+    ),
+    '#attributes' => array('id' => 'customajax-form'),
+  );
+
+  drupal_add_js(drupal_get_path('module', 'customajax') . '/customajax.js', 'file');
+
+  return $form;
+}
+
+/**
+ * AJAX callback for the text field.
+ */
+function ajax_submit_callback() {
+  $query = db_select('customajax', 't')
+    ->fields('t', array('id', 'name')) 
+    ->execute();
+
+  $rows = array();
+  foreach ($query as $record) {
+    $rows[] = array(
+      'data' => array(
+        $record->id,
+        $record->name,
+      ),
+    );
+  }
+  $header = array('ID', 'Name');
+  $element = theme('table', array('header' => $header, 'rows' => $rows));
+
+  return $element;
+}
+
+
+/**
+ * AJAX callback for form submit.
+ */
+function mymodule_ajax_submit_callback($form, &$form_state) {
+  $query = db_insert('customajax')
+    ->fields(array(
+      'name' => $form_state['values']['name'],
+    ))
+    ->execute();
+  return true;
+}

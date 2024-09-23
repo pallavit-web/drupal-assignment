@@ -1,0 +1,138 @@
+<?php
+/**
+ * Implements hook_menu().
+ */
+function custom_menu() {
+    $items = array();
+    $items['admin/structure/diwali_gifts_entity'] = array(
+      'title'             =>  'DiwaliGifts Custom Entity',
+      'description'       =>  'DiwaliGifts content entity',
+      'page callback'     =>  'load_custom_content_entity',
+      'access callback'   =>   true,
+      'access arguments'  =>   array('administer my custom entity'),
+      'type'              =>   MENU_NORMAL_ITEM,
+    );
+
+    $items['addentity'] = array(
+      'title' => 'Links', 
+      'page callback'     =>  'drupal_get_form',
+      'access callback'   =>   true,
+      'page arguments'    =>   array('diwali_gifts_entity_admin_page'), 
+      'access arguments'      => array('administer my custom entity'), 
+      'type' => MENU_SUGGESTED_ITEM,
+    );
+
+    $items['admin/content/customcontent/add'] = array(
+      'title' => 'Add Custom Content',
+      'page callback' => 'drupal_get_form',
+      'page arguments'  => array('diwali_gifts_entity_admin_page'),
+      'access arguments' => array('create custom_content content'),
+      'access callback'   =>   true,
+      'type' => MENU_NORMAL_ITEM,
+    );
+   
+  return $items;
+}
+
+/**
+ * function to load the all custom contents types from node table.
+ **/
+function load_custom_content_entity() {
+  $rows = array();
+  $content_type = 'diwali_gifts'; // Replace with your content type machine name.
+  $nodes = custom_content_list_fetch_nodes($content_type);
+  foreach ($nodes as $node) {
+    $rows[] = array(
+      'data' => array(
+        $node->nid,
+        l($node->title, 'node/' . $node->nid),
+      ),
+    );
+  }
+
+  $button = l('Add custom content type', '/admin/content/customcontent/add');
+  $header = array('ID', 'Name', );
+  $output = theme('table', array('header' => $header, 'rows' => $rows));
+ 
+  return $button . $output;  
+}
+
+/**
+ * Form to Add custom content type
+ **/
+function diwali_gifts_entity_admin_page() {
+  $form = array();
+    $form['title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Custom Content Type'),
+      '#default_value' => variable_get('title', ''),
+      '#description' => t('Enter a value.'),
+      '#required' => TRUE,
+    );
+
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+    );
+
+    return $form;
+}
+
+
+/**
+ * Form submission handler for module configuration.
+ **/
+function diwali_gifts_entity_admin_page_submit($form, &$form_state) {
+  $node = new stdClass();
+  $node->type = 'diwali_gifts';
+  node_object_prepare($node); 
+  $node->title = $form_state['values']['title'];
+  $node->uid = 1; 
+  $node->status = 1; 
+  $node->language = LANGUAGE_NONE; 
+  $node->created = REQUEST_TIME; 
+  $node->changed = REQUEST_TIME; 
+
+  $node->body[$node->language][0]['value'] = 'This is the body content for the custom content.';
+  $node->body[$node->language][0]['format'] = 'filtered_html'; 
+  node_save($node);
+  drupal_set_message(t('Custom Entity type saved.'));
+
+  return $node;
+}
+
+
+
+/**
+ * Fetch nodes of a specific content type.
+ *
+ * @param string $content_type
+ *   The machine name of the content type.
+ *
+ * @return array
+ *   An array of node objects.
+ */
+function custom_content_list_fetch_nodes($content_type) {
+  $query = new EntityFieldQuery();
+
+  // Query for nodes of a specific content type.
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $content_type)
+    ->propertyCondition('status', 1) // Only fetch published nodes.
+    ->propertyOrderBy('created', 'DESC'); // Order by created date descending.
+
+  $result = $query->execute();
+
+  // Return the nodes if found.
+  if (isset($result['node'])) {
+    return node_load_multiple(array_keys($result['node']));
+  }
+
+  // Return an empty array if no nodes are found.
+  return array();
+}
+
+
+
+
+

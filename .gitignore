@@ -10,14 +10,4 @@ sites/all/themes/*/less/
 sites/*/settings.php
 sites/*/settings.local.php
 
-# Ignore private files directories.
-sites/*/files/private/
-sites/*/private/
-sites/*/files/tmp/
-sites/default/files/
-sites/default/files/css/
-sites/default/files/js/
-sites/default/files/tmp/
-sites/default/files/php/
-sites/default/files/styles/
-sites/default/files/translations/
+

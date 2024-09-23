@@ -1,0 +1,76 @@
+<?php
+/**
+ * Implements hook_entity_info().
+ */
+function custom_content_entity_entity_info() {
+  $info = array();
+
+  // Define a custom entity type.
+  $info['custom_content'] = array(
+    'label' => t('Custom Content Entity'),
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'base table' => 'node', // Use the existing node table
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'nid',
+      'bundle' => 'type',
+      'label' => 'title',
+    ),
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'bundles' => array(
+      'custom_content' => array(
+        'label' => t('Custom Content'),
+        'admin' => array(
+          'path' => 'admin/structure/types/manage/custom_content',
+          'access callback' => 'user_access',
+          'access arguments' => array('administer content types'),
+        ),
+      ),
+    ),
+  );
+
+  return $info;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function custom_content_entity_menu() {
+  $items = array();
+
+  // Add a custom menu item for entity creation.
+  $items['admin/content/custom-content/add'] = array(
+    'title' => 'Add Custom Content',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('custom_content_entity_add_form'),
+    'access arguments' => array('create custom_content content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Form for adding custom content.
+ */
+function custom_content_entity_add_form($form, &$form_state) {
+  // Use node_add() to get the content creation form for 'custom_content' type.
+  $form = node_add('custom_content');
+
+  return $form;
+}
+
+/**
+ * Implements hook_node_insert().
+ * To handle data saving to the existing node table.
+ */
+function custom_content_entity_node_insert($node) {
+  if ($node->type == 'custom_content') {
+    // Perform custom logic before or after the node is saved to the database.
+    // Example: Set a custom field value or log a message.
+  }
+}
+

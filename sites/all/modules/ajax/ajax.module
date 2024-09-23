@@ -1,0 +1,140 @@
+<?php
+/**
+ * Implements hook_menu().
+ */
+function ajax_menu() {
+    $items = array();
+    $items['ajax_forms'] = array(
+      'title'             =>  'Custom AJAX Form',
+      'description'       =>  'Custom AJAX Form',
+      'page callback'     =>  'drupal_get_form',
+      'page arguments'    =>   array('ajax'),
+      'access arguments'  =>   array('administer site configuration'),
+      'type'              =>   MENU_NORMAL_ITEM
+    );
+
+    // AJAX callback path.
+    $items['ajax_form_submit'] = array(
+      'page callback' => 'ajax_submit_callback',
+      'access callback' => TRUE,
+      'type' => MENU_NORMAL_ITEM,
+    //  'access arguments'  =>   array('access content'),
+    //  'delivery callback' => 'drupal_json_output',
+    );
+
+    $items['submit_ajax_data'] = array(
+      'title' => 'AJAX Callback',
+      'page callback' => 'ajax_ajax_callback_function',
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+      'access arguments'  =>   array('access content'),
+      'delivery callback' => 'drupal_json_output',
+    );
+
+    return $items;
+} 
+
+function ajax_ajax_callback_function($form, &$form_state) {
+
+  $email= $form_state['values'];
+  print_r($form_state['values']);exit;
+
+  // Output your AJAX response here
+  drupal_json_output(array('status' => 'success', 'data' => $email));
+}
+
+/**
+ * Ajax-enabled select element causes replacement of a set of checkboxes
+ * based on the selection.
+ */
+function ajax($form, &$form_state) {
+   
+     // Create a textfield.
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#default_value' => '',
+    '#attributes' => array(
+      'autocomplete' => 'name',  // Autocomplete attribute for the 'name' field.
+    ),
+  );
+
+  $form['email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Email'),
+    '#default_value' => '',
+    '#attributes' => array(
+      'autocomplete' => 'email',  // Autocomplete attribute for the 'name' field.
+    ),
+  );
+
+  // Create a container to wrap around the form elements to be updated.
+  $form['ajax_wrapper'] = array(
+    '#type' => 'container',
+    '#attributes' => array('id' => 'ajax-form-wrapper'),
+  );
+
+  $form['message'] = array(
+    '#type' => 'container',
+    '#attributes' => array('id' => 'message'),
+  );
+
+  // Add a submit button.
+  $form['ajax_wrapper']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+    '#attributes' => array('id' => 'ajax-form'),
+    
+  );
+
+
+  // Attach custom JavaScript
+   drupal_add_js(drupal_get_path('module', 'ajax') . '/ajax.js', 'file');
+ 
+    return $form;
+}
+
+
+
+/**
+ * Callback element needs only select the portion of the form to be updated.
+ * Since #ajax['callback'] return can be HTML or a renderable array (or an
+ * array of commands), we can just return a piece of the form.
+ */
+function ajax_submit_callback($form, &$form_state) {
+  
+  $name = $form_state['values']['name'];
+  $email = $form_state['values']['email'];
+  
+  //  variable_set('name', $form_state['values']['name']);
+    $query = db_insert('ajax')
+        ->fields(array(
+          'name' => $name,
+          'email'=> $email
+        ))
+        ->execute();
+
+    $query = db_select('ajax', 't')
+    ->fields('t', array('id', 'name','email')) 
+    ->execute();
+
+    // $rows = array();
+    // foreach ($query as $record) {
+    //   $rows[] = array(
+    //     'data' => array(
+    //       $record->id,
+    //       $record->name,
+    //       $record->email,
+    //     ),
+    //   );
+    // }
+    // $header = array('ID', 'Name','Email');
+    // $element = theme('table', array('header' => $header, 'rows' => $rows));
+
+    drupal_json_output(array('status' => 'success', 'data' => 'Your response'));
+    
+    //return $element;
+}
+
+
+

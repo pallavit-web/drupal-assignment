@@ -1,0 +1,27 @@
+<?php
+/**
+ * Implements hook_menu().
+ */
+function custom_entity_example_menu() {
+    $items = array();
+    // Menu item for adding a new configuration.
+    $items['admin/config/custom_entity_example'] = array(
+      'title'             =>  'custom_entity_example',
+      'description'       =>  'custom_entity_example Information',
+      'page callback'     =>  'drupal_get_form',
+      'access callback'   =>   true,  //any user can access this page
+      'page arguments'    =>   array('custom_entity_page'),
+      'access arguments'  =>   array('administer site configuration'),
+      'type'              =>   MENU_NORMAL_ITEM
+    );
+
+    return $items;
+} 
+
+
+function custom_entity_page () {
+  $content ='<h1> Hello </h1>';
+  return $content;
+}
+
+

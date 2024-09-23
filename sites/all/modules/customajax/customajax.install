@@ -1,0 +1,23 @@
+<?php 
+function customajax_schema() {
+    $schema = array();
+    $schema['customajax'] = array(
+        'description' => 'Table for ajax',
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'not null' => TRUE,
+                'description' => 'Primary Key',
+            ),
+            'name' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'description' => 'Name of the entity.',
+            ),
+        ),
+        'primary key' => array('id'),
+    );
+
+    return $schema;
+}
