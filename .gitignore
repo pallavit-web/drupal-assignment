@@ -1,0 +1,23 @@
+# Ignore core and contrib files that are installed via drush or manually.
+sites/all/libraries/
+sites/all/themes/
+sites/all/themes/*/css/
+sites/all/themes/*/js/
+sites/all/themes/*/sass/
+sites/all/themes/*/less/
+
+# Ignore config files that might contain sensitive information.
+sites/*/settings.php
+sites/*/settings.local.php
+
+# Ignore private files directories.
+sites/*/files/private/
+sites/*/private/
+sites/*/files/tmp/
+sites/default/files/
+sites/default/files/css/
+sites/default/files/js/
+sites/default/files/tmp/
+sites/default/files/php/
+sites/default/files/styles/
+sites/default/files/translations/
