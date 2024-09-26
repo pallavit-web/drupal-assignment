@@ -1,5 +1,5 @@
-name = Custom Module
-description = Provides custom configuration entity.
+name = Custom Module by palla
+description = Provides custom configuration entity palla.
 core = 7.x
 package = Custom
 version = "7.x-1.0"

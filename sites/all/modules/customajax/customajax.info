@@ -1,6 +1,5 @@
-name = Custom AJAX Forms pallavi
-description = Custom AJAX forms pallavi
+name = Custom AJAX Forms
+description = Custom AJAX forms
 core = 7.x
 package = Custom
 version = "7.x-1.0"
-
