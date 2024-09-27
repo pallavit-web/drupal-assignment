@@ -22,8 +22,9 @@ Web form2- Contact Form - http://localhost/drupal-assignment/?q=contact-form
  -Diwali Gifts Module
 
 ## Database
+A sample database file is located in the `/database/` directory:
 -CREATE DATABASE demo;
--mysql -u <db_username> -p demo < database.sql
+-mysql -u <db_username> -p demo < demo.sql
 
 
 
