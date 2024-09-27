@@ -16,6 +16,15 @@ Web form2- Contact Form - http://localhost/drupal-assignment/?q=contact-form
 ## Installation
 1. git clone https://github.com/pallavit-web/drupal-assignment
 2. Download the module and place it in `sites/all/modules/
-Go to Admin > Modules and enable the below module.
--Custom AJAX Forms
--Diwali Gifts Module
+ -chmod -R 775 sites/default/files
+  Go to Admin > Modules and enable the below module.
+ -Custom AJAX Forms
+ -Diwali Gifts Module
+
+## Database
+A sample database file is located in the `/database/` directory:
+-CREATE DATABASE demo;
+-mysql -u <db_username> -p demo < demo.sql
+
+
+
